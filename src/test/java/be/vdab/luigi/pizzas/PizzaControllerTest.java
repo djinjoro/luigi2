@@ -25,11 +25,28 @@ public class PizzaControllerTest {
         this.mockMvc = mockMvc;
         this.jdbcClient = jdbcClient;
     }
+    private long idVanTest1Pizza(){
+        return jdbcClient.sql("select id from pizzas where naam = 'test1'")
+                .query(Long.class)
+                .single();
+    }
     @Test void findAantalVindtHetJuisteAantalPizzas() throws Exception{
         mockMvc.perform(get("/pizzas/aantal"))
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$")
                                 .value(JdbcTestUtils.countRowsInTable(jdbcClient, PIZZAS_TABLES)));
+    }
+    @Test void findByIdMetEenBestaandeIdVindtDePizza() throws Exception{
+        var id = idVanTest1Pizza();
+        mockMvc.perform(get("/pizzas/{id}", id))
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("id").value(id),
+                        jsonPath("naam").value("test1"));
+    }
+    @Test void findByIdMetEenOnbestaandeIdGeeftNotFound() throws Exception{
+        mockMvc.perform(get("/pizzas/{id}", Long.MAX_VALUE))
+                .andExpect(status().isNotFound());
     }
 }
