@@ -1,8 +1,8 @@
 "use strict";
-export  function byId(id){
+export function byId(id){
     return document.getElementById(id);
 }
-export  function  setText(id, text){
+export function setText(id, text){
     byId(id).innerText = text;
 }
 export function toon(id){
