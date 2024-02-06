@@ -1,9 +1,12 @@
 package be.vdab.luigi.pizzas;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 @RestController
@@ -55,5 +58,11 @@ public class PizzaController {
     @PostMapping("pizzas")
     long create(@RequestBody @Valid NieuwePizza nieuwePizza){
         return pizzaService.create(nieuwePizza);
+    }
+    @PatchMapping("pizzas/{id}/prijs")
+    void updatePrijs(@PathVariable long id,
+                     @RequestBody @NotNull @PositiveOrZero BigDecimal nieuwePrijs){
+        var prijs = new Prijs(nieuwePrijs, LocalDateTime.now(), id);
+        pizzaService.updatePrijs(prijs);
     }
 }
